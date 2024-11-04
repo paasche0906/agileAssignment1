@@ -2,7 +2,7 @@
 
 __Name:__ ....Jiacheng Pan .....
 
-__Demo:__ .... https://youtu.be/HZSJwmEr_XQ ....
+__Demo:__ .... [The link to your YouTube demonstration](https://youtu.be/HZSJwmEr_XQ) ....
 
 This repository contains the containerization of the mukti-container application illustrated below.
 
@@ -26,6 +26,8 @@ This project supports both development and production environments. The developm
 ├── .env               # Environment variable configuration file for Docker containers.
 ├── .gitignore         # Specifies untracked files to ignore.
 ├── docker-compose.yml # The Docker Compose file that defines and configures the application services.
+├── docker-compose.dev.yml # Development mode.
+├── docker-compose.prod.yml # Production mode.
 ├── Dockerfile         # Instructions for building the application Docker image.
 ├── README.md          # Project documentation.
 ├── package.json       # Dependency definition file for Node.js applications.
