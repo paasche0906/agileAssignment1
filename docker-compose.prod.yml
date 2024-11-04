@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  movies-api:
+    image: doconnor/movies-api:1.0
+    container_name: movies-api
+    ports:
+      - '9000:9000'  
+    environment:
+      MONGODB_URI: mongodb://admin:password@mongo:27017/movies
+      REDIS_URI: redis://redis
+      ENABLE_WRITING_HANDLERS: 'false'
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - backend
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - backend
+
+  redis:
+    image: redis
+    container_name: redis
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  mongo-data:
