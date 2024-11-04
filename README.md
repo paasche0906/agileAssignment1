@@ -1,5 +1,12 @@
-## Agile Software Practice - Assignment 1.
-## Name: Jiacheng Pan Student Number:20108802
+## Docker Assignment - Agile Software Practice.
+
+__Name:__ ....Jiacheng Pan .....
+
+__Demo:__ .... The link to your YouTube demonstration ....
+
+This repository contains the containerization of the mukti-container application illustrated below.
+
+![](./images/arch.png)
 
 ## Project overview
 
@@ -34,11 +41,8 @@ This project supports both development and production environments. The developm
 - redis: Redis server.
 - mongo-express:1.0-20-alpine3.19: MongoDB management interface.
 
-## Environment configuration
- .env
-
-
 ## How to deploy
+
 1. Clone the repository to your local machine.
 ```sh
 $ git clone <repository-url>
@@ -59,28 +63,63 @@ docker-compose up --build
 $ docker-compose down
 ```
 
-## Database initialisation
-The `seed.js` script is used to seed the MongoDB database with initial movie data. In the development environment, `seed.js` automatically imports the movie data from `seeding.json` into the MongoDB database when the service starts.
+### Database Seeding.
 
-- Functionality: Connects to the `movies` database and inserts data from `seeding.json` into the `movies` collection.
-- Usage: Run this script to initialize the database with sample movie data for development or testing.
+The `seed.js` script automates the seeding of the application's MongoDB database as follows:
+1. **Dependencies and Setup**:
+   - The script uses `MongoClient` from the `mongodb` library to connect to the MongoDB instance.
+   - It also uses the `fs` module to read data from a JSON file.
+   - The connection details (`mongodb://admin:password@mongo:27017`) are configured to connect to a Docker container.
+2. **Connection to Database**:
+   - The script connects to the database named `'movies'` using the MongoDB client.
+   - It establishes a connection using credentials specified in the Docker Compose setup, ensuring easy configuration and isolation of the development environment.
+3. **Loading and Inserting Data**:
+   - The script reads movie data from `seeding.json`, which contains records to be inserted into the database.
+   - It then inserts this data into the `'movies'` collection in the database.
 
-To run the script, use:
+   To run the script, use:
 ```
 node seed.js
 ```
 Make sure MongoDB is running and `seeding.json` is available with valid data.
 
-### Redis Caching and Rate Limiting Tests
+### M.ulti-Stack.
+
+To support both development and production stack options, I created two separate Docker Compose files:
+1. **`docker-compose.dev.yml` (Development Environment)**:
+   - Includes services like **Mongo Express** for easy database management.
+   - **Seed service** runs a script to automatically initialize the database with sample data, making development and testing more efficient.
+   - This file allows developers to have a convenient environment for debugging and managing data.
+2. **`docker-compose.prod.yml` (Production Environment)**:
+   - **Does not include Mongo Express** or the seed service to enhance security and prevent accidental re-initialization of data in production.
+   - Focuses only on essential services—**Movies API, MongoDB, and Redis**—ensuring a lightweight and secure setup.
+These separate configurations help ensure that developers have the tools they need during development, while production remains streamlined, stable, and secure.
+
+### Development Environment:
+```sh
+docker-compose -f docker-compose.dev.yml up --build
+```
+This starts Mongo Express and automatically initializes the database, making it convenient for debugging and development.
+
+### Production Environment:
+```sh
+docker-compose -f docker-compose.prod.yml up --build
+```
+This version does not include Mongo Express and does not perform database initialization, ensuring security and stability in the production environment.
+
+By using this approach, different environments have clear configuration distinctions, providing convenience during development while maintaining security and performance in production.
+
+## Redis Caching and Rate Limiting Tests
 
 1. **Cache test**.
    - Send the same request multiple times, the first time will fetch the data from MongoDB and subsequent requests will fetch it from the Redis cache.
-
 2. **Rate Limit Test**: If the ‘Get All Movies’ request is too large, it will get the data from MongoDB the first time.
    - Redis will rate-limit the ‘get all movies’ requests if they are too frequent. Try sending multiple requests to see if rate limiting is in effect.
 
 ## Container Isolation
+
 Each service runs in its own container, ensuring isolated environments that prevent conflicts between dependencies and configurations across services.
 
 ## Conclusion
+
 This project provides a modular, containerised film information API that utilises Docker to achieve isolation and flexible deployment between components, and provides two environment configurations for development and production.
